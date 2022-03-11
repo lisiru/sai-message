@@ -4,15 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/marmotedu/errors"
-	"reflect"
 	"regexp"
-	"strings"
 	"sai/common"
 	"sai/model"
 	"sai/pkg/code"
 	"sai/pkg/util"
 	"sai/pkg/util/kafka"
 	"sai/store"
+	"strings"
 )
 
 type Processor interface {
@@ -97,16 +96,23 @@ func (asseble *AssembleAction) Process(ctx context.Context, processContext commo
 
 	}
 	//
-	taskInfoList := asseble.buildTaskInfo(processContext.SendTaskModel, messageTemplateInfo)
+	taskInfoList, err:= asseble.buildTaskInfo(processContext.SendTaskModel, messageTemplateInfo)
+	if err != nil {
+		return errors.WithCode(code.ErrMessageTemplateNotFound, "")
+	}
 	processContext.SendTaskModel.TaskInfo = taskInfoList
 	return nil
 
 }
 
-func (assemble *AssembleAction) buildTaskInfo(sendTaskModel common.SendTaskModel, messageTemplateInfo *model.MessageTemplate) []common.TaskInfo {
+func (assemble *AssembleAction) buildTaskInfo(sendTaskModel common.SendTaskModel, messageTemplateInfo *model.MessageTemplate) ([]common.TaskInfo,error) {
 	messageParamList := sendTaskModel.MessageParamList
 	var taskInfoList []common.TaskInfo
 	for _, v := range messageParamList {
+		contentValue,err:=assemble.getContentValue(messageTemplateInfo,v)
+		if err != nil {
+			return nil, err
+		}
 		taskInfoList = append(taskInfoList, common.TaskInfo{
 			MessageTemplateId: messageTemplateInfo.Id,
 			BusinessId:        "",
@@ -114,35 +120,49 @@ func (assemble *AssembleAction) buildTaskInfo(sendTaskModel common.SendTaskModel
 			IdType:            messageTemplateInfo.IdType,
 			SendChannel:       messageTemplateInfo.SendChannel,
 			MsgType:           messageTemplateInfo.MsgType,
-			Content:           assemble.getContentValue(messageTemplateInfo, v),
+			Content:           contentValue,
 			SendAccount:       messageTemplateInfo.SendAccount,
 		})
 	}
-	return taskInfoList
+	return taskInfoList,nil
 
 }
 
-func (assemble *AssembleAction) getContentValue(messageTemplateInfo *model.MessageTemplate, messageParam common.MessageParam) interface{} {
+func (assemble *AssembleAction) getContentValue(messageTemplateInfo *model.MessageTemplate, messageParam common.MessageParam) (common.Content,error) {
+	content:=common.Content{}
 	channel := messageTemplateInfo.SendChannel
-	contentStruct := common.ChannelContentMap[channel]
-	//variables := messageParam.Variable
-	//msgContent := json.Unmarshal([]byte(messageTemplateInfo.MsgContent), contentStruct)
-	structType := reflect.TypeOf(contentStruct)
-	fieldsLen := structType.NumField()
-	structValue := reflect.ValueOf(contentStruct)
-	for i := 0; i < fieldsLen; i++ {
-		columnName := structType.Field(i).Name
-		if columnName != "Url" {
-			continue
-		}
-		urlValue := structValue.FieldByName(columnName)
-		if len(urlValue.String()) != 0 {
-			resultUrl := util.GenerateUrl(urlValue.String(), messageTemplateInfo.Id, messageTemplateInfo.TemplateType)
-			urlValue.SetString(resultUrl)
-		}
-
+	err := json.Unmarshal([]byte(messageTemplateInfo.MsgContent), &content)
+	if err != nil {
+		return content, errors.WithCode(code.ErrParamNotValid,"")
 	}
-	return contentStruct
+	switch channel {
+	case common.CHANNEL_TYPE_SMS:
+		url:=content.SmsContent.Url
+		if len(url) !=0{
+			content.SmsContent.Url=util.GenerateUrl(url,messageTemplateInfo.Id,messageTemplateInfo.TemplateType)
+		}
+	default:
+	}
+	return content,nil
+	//contentStruct := common.ChannelContentMap[channel]
+	////variables := messageParam.Variable
+	////msgContent := json.Unmarshal([]byte(messageTemplateInfo.MsgContent), contentStruct)
+	//structType := reflect.TypeOf(contentStruct)
+	//fieldsLen := structType.NumField()
+	//structValue := reflect.ValueOf(contentStruct)
+	//for i := 0; i < fieldsLen; i++ {
+	//	columnName := structType.Field(i).Name
+	//	if columnName != "Url" {
+	//		continue
+	//	}
+	//	urlValue := structValue.FieldByName(columnName)
+	//	if len(urlValue.String()) != 0 {
+	//		resultUrl := util.GenerateUrl(urlValue.String(), messageTemplateInfo.Id, messageTemplateInfo.TemplateType)
+	//		urlValue.SetString(resultUrl)
+	//	}
+	//
+	//}
+	//return contentStruct
 
 }
 
@@ -153,9 +173,8 @@ func (s *SendMqAction) Process(ctx context.Context, processContext common.Proces
 	if err != nil {
 		return errors.WithCode(code.ErrParamNotValid, "")
 	}
-	kafka.InitProducer()
-	defer kafka.ProduceClose()
-	kafka.Send(kafka.TopicName, string(message))
+	producer:=kafka.NewProducer(ctx)
+	producer.Send(kafka.TopicName,string(message))
 	return nil
 
 }

@@ -21,6 +21,29 @@ const  (
 )
 
 const  (
+	MESSAGE_TYPE_NOTICE int = iota+1
+	MESSAGE_TYPE_MARKETING
+	MESSAGE_TYPE_AUTH_CODE
+
+)
+
+var  MessageTypeEnum = map[int]string{
+	MESSAGE_TYPE_NOTICE: "notice",
+	MESSAGE_TYPE_MARKETING: "marketing",
+	MESSAGE_TYPE_AUTH_CODE: "auth_code",
+}
+
+var ChannelTypeEnum = map[int]string{
+	CHANNEL_TYPE_IM: "im",
+	CHANNEL_TYPE_SMS: "sms",
+	CHANNEL_TYPE_PUSH: "push",
+	CHANNEL_OFFICIAL_ACCOUNT: "official_account",
+	CHANNEL_TYPE_EMAIL: "email",
+	MINI_PROGRAM: "mini_program",
+
+}
+
+const  (
 	TRUE=1
 	FALSE=0
 )

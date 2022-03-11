@@ -2,13 +2,18 @@ package kafka
 
 import (
 	"context"
+	"encoding/json"
 	"github.com/Shopify/sarama"
+	"sai/common"
+	"sai/pkg/pending"
+	"sai/pkg/util"
 	"strings"
 	"sync"
 	"sai/pkg/logger"
 )
 
 type ConsumerGroupHandler struct {
+	GroupId string
 }
 
 func (ConsumerGroupHandler) Setup(_ sarama.ConsumerGroupSession) error {
@@ -20,7 +25,17 @@ func (ConsumerGroupHandler) Cleanup(_ sarama.ConsumerGroupSession) error {
 }
 
 func (consumer ConsumerGroupHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+	var taskInfoList = []common.TaskInfo{}
+
 	for msg := range claim.Messages() {
+		json.Unmarshal(msg.Value, &taskInfoList)
+		groupId:=util.GetGroupIdByTaskInfo(taskInfoList[0])
+		if consumer.GroupId== groupId{
+			for _,taskInfo:=range taskInfoList{
+				pending.GetPool(groupId).Schedule(pending.HandlerMessage(taskInfo))
+			}
+
+		}
 		session.MarkMessage(msg, "")
 	}
 	return nil
@@ -42,7 +57,7 @@ func ConsumerGroup(topic, groupId string) {
 	go func() {
 		defer wg.Done()
 		for {
-			err := cg.Consume(ctx, []string{topic}, ConsumerGroupHandler{})
+			err := cg.Consume(ctx, []string{topic}, ConsumerGroupHandler{GroupId: groupId})
 			if err != nil {
 				logger.Errorf("Consume err: ", err)
 			}

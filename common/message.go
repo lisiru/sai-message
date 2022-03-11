@@ -18,14 +18,22 @@ type MessageParam struct {
 }
 
 type TaskInfo struct {
-	MessageTemplateId int64       `json:"message_template_id"`
-	BusinessId        string      `json:"bussiness_id"`
-	Receiver          []string    `json:"receiver"`
-	IdType            int         `json:"id_type"`
-	SendChannel       int         `json:"send_channel"`
-	MsgType           int         `json:"msg_type"`
-	Content           interface{} `json:"content"`
-	SendAccount       int         `json:"send_account"`
+	MessageTemplateId      int64                  `json:"message_template_id"`
+	BusinessId             string                 `json:"bussiness_id"`
+	Receiver               []string               `json:"receiver"`
+	IdType                 int                    `json:"id_type"`
+	SendChannel            int                    `json:"send_channel"`
+	MsgType                int                    `json:"msg_type"`
+	Content                Content            `json:"content"`
+	SendAccount            int                    `json:"send_account"`
+}
+
+type Content struct {
+	ImContent              ImContent              `json:"im_content"`
+	MiniProgramContent     MiniProgramContent     `json:"mini_program_content"`
+	OfficialAccountContent OfficialAccountContent `json:"official_account_content"`
+	PushContent            PushContent            `json:"push_content"`
+	SmsContent             SmsContent             `json:"sms_content"`
 }
 
 type SendRequestParam struct {
@@ -59,10 +67,10 @@ type SmsContent struct {
 	Url     string
 }
 
-var ChannelContentMap = map[int]interface{} {
-	CHANNEL_TYPE_IM: ImContent{},
-	CHANNEL_TYPE_EMAIL: EmailContent{},
+var ChannelContentMap = map[int]interface{}{
+	CHANNEL_TYPE_IM:          ImContent{},
+	CHANNEL_TYPE_EMAIL:       EmailContent{},
 	CHANNEL_OFFICIAL_ACCOUNT: OfficialAccountContent{},
-	CHANNEL_TYPE_PUSH: PushContent{},
-	CHANNEL_TYPE_SMS: SmsContent{},
+	CHANNEL_TYPE_PUSH:        PushContent{},
+	CHANNEL_TYPE_SMS:         SmsContent{},
 }
