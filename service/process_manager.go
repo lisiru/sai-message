@@ -1,0 +1,35 @@
+package service
+
+import (
+	"context"
+	"sai/common"
+	"sai/store"
+)
+
+type Manager struct {
+	Processor []Processor
+}
+
+
+func (m *Manager) AddProcess(processor Processor)  {
+	m.Processor=append(m.Processor,processor)
+
+}
+
+func NewManager(store store.Factory) *Manager {
+	return &Manager{Processor: []Processor{
+		&PreParamCheckAction{}, &AfterParamCheckAction{}, &AssembleAction{
+			store: store,
+		}, &SendMqAction{},
+	}}
+}
+
+func (m *Manager) Run(ctx context.Context,processContext common.ProcessContext) error {
+	for _,v:=range m.Processor{
+		err:=v.Process(ctx,processContext)
+		if err != nil {
+			return  err
+		}
+	}
+	return nil
+}

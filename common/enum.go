@@ -1,0 +1,29 @@
+package common
+
+const  (
+	ID_TYPE_USER_ID int= iota+1
+	ID_TYPE_DID
+	ID_TYPE_PHONE
+	ID_TYPE_OPEN_ID
+	ID_TYPE_EMAIL
+
+)
+
+
+
+const  (
+	CHANNEL_TYPE_IM int  = iota+1
+	CHANNEL_TYPE_PUSH
+	CHANNEL_TYPE_SMS
+	CHANNEL_TYPE_EMAIL
+	CHANNEL_OFFICIAL_ACCOUNT
+	MINI_PROGRAM
+)
+
+const  (
+	TRUE=1
+	FALSE=0
+)
+
+
+
