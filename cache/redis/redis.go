@@ -18,6 +18,10 @@ type redisStore struct {
 	client redis.UniversalClient
 }
 
+func (ch *redisStore) MessageCaches() cache.MessageCache {
+	return NewMessage(ch)
+}
+
 func (ch *redisStore) UserCaches() cache.UserCache  {
 	return NewUsers(ch)
 }
@@ -123,7 +127,7 @@ func (r *redisStore) GetObj(ctx context.Context, key string, model interface{}) 
 }
 
 // GetMany 获取某些key对应的值
-func (r *redisStore) GetMany(ctx context.Context, keys []string) (map[string]string, error) {
+func (r *redisStore) GetMany(keys []string) (map[string]string, error) {
 	pipeline := r.client.Pipeline()
 	vals := make(map[string]string)
 	cmds := make([]*redis.StringCmd, 0, len(keys))
@@ -160,7 +164,7 @@ func (r *redisStore) SetObj(ctx context.Context, key string, val interface{}, ti
 }
 
 // SetMany 设置多个key和值到缓存
-func (r *redisStore) SetMany(ctx context.Context, data map[string]string, timeout time.Duration) error {
+func (r *redisStore) SetMany(data map[string]string, timeout time.Duration) error {
 	pipline := r.client.Pipeline()
 	cmds := make([]*redis.StatusCmd, 0, len(data))
 	for k, v := range data {

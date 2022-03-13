@@ -18,9 +18,7 @@ type datastore struct {
 	// db *gorm.DB
 }
 
-func (ds *datastore) Activity() store.ActivityStore {
-	return newActivity(ds)
-}
+
 
 func (ds *datastore) Users() store.UserStore {
 	return newUsers(ds)

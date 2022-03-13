@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"github.com/Shopify/sarama"
 	"sai/common"
-	"sai/pkg/pending"
+	"sai/pkg/handler/pending"
+	"sai/pkg/logger"
 	"sai/pkg/util"
 	"strings"
 	"sync"
-	"sai/pkg/logger"
 )
 
 type ConsumerGroupHandler struct {

@@ -48,5 +48,19 @@ const  (
 	FALSE=0
 )
 
+// 去重类型枚举
+const  (
+	DE_DUPLICATION_TYPE_CONTENT= iota+1
+	DE_DUPLICATION_TYPE_FREQUENCY
+)
+
+var DeDuplicationTypeList = []int{DE_DUPLICATION_TYPE_CONTENT,DE_DUPLICATION_TYPE_FREQUENCY}
+
+
+
+
+
+
+
 
 

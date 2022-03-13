@@ -2,7 +2,7 @@ package util
 
 import (
 	"fmt"
-	"golang.org/x/tools/go/ssa/interp/testdata/src/strings"
+	"strings"
 	"time"
 )
 

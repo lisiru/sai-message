@@ -13,4 +13,5 @@ var ErrKeyNotFound = errors.New("cache key not found")
 
 type Factory interface {
 	UserCaches() UserCache
+	MessageCaches() MessageCache
 }

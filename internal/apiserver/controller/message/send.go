@@ -19,7 +19,7 @@ func (me *MessageController) Send(c *gin.Context)  {
 	}
 
 
-	me.service.Message().SendMessage()
+	me.service.Message().SendMessage(c,*sendRequestParam)
 
 
 }

@@ -1,5 +1,7 @@
 package common
 
+import "time"
+
 type ProcessContext struct {
 	Code          string // 标识责任链的code
 	SendTaskModel SendTaskModel
@@ -73,4 +75,11 @@ var ChannelContentMap = map[int]interface{}{
 	CHANNEL_OFFICIAL_ACCOUNT: OfficialAccountContent{},
 	CHANNEL_TYPE_PUSH:        PushContent{},
 	CHANNEL_TYPE_SMS:         SmsContent{},
+}
+
+type DeduplicationParam struct {
+	TaskInfo TaskInfo
+	DeduplicationTime time.Duration
+	CountNum int
+	// todo 加数据埋点
 }

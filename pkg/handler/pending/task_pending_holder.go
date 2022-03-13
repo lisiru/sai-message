@@ -9,11 +9,12 @@ const (
 	goroutineSize = 20
 )
 
-var groupIds = util.GetAllGroupIds()
 
-var taskPendingHolder map[string]*workerpool.Pool
+
+var taskPendingHolder =make(map[string]*workerpool.Pool)
 
 func init() {
+	var groupIds = util.GetAllGroupIds()
 	for _, groupId := range groupIds {
 		pool := workerpool.NewPool(goroutineSize, workerpool.WithBlock(true), workerpool.WithPreAllocWorkers(false))
 		taskPendingHolder[groupId] = pool
