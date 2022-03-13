@@ -2,10 +2,13 @@ package messagehandler
 
 import "sai/common"
 
-type SmsHandler struct {
-
+func init() {
+	Handlers[common.CHANNEL_TYPE_SMS] = &SmsHandler{}
 }
 
-func (s *SmsHandler) DoHandler(taskInfo common.TaskInfo)  {
+type SmsHandler struct {
+}
+
+func (s *SmsHandler) DoHandler(taskInfo common.TaskInfo) {
 
 }
