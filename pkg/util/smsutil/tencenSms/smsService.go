@@ -1,16 +1,16 @@
 package tencenSms
 
 import (
-	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
+	tencentCommon "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/errors"
 	"github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common/profile"
 	sms "github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/sms/v20210111" // 引入sms
+	"sai/common"
 	"sai/pkg/logger"
-	"sai/pkg/options"
 )
 
 type SmsClient struct {
-	Credential *common.Credential
+	Credential *tencentCommon.Credential
 	Region     string
 	Cpf        *profile.ClientProfile
 	Request    SmsRequest
@@ -36,9 +36,9 @@ func WithRequest(request SmsRequest) Option {
 	}
 }
 
-func WithCredential(options options.SmsOptions) Option {
+func WithCredential(options *common.SmsAccountOptions) Option {
 	return func(smsClient *SmsClient) {
-		smsClient.Credential = common.NewCredential(options.SecretId, options.SecretKey)
+		smsClient.Credential = tencentCommon.NewCredential(options.SecretId, options.SecretKey)
 	}
 }
 func WithCpfReqMethod(method string) Option {

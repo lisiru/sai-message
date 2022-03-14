@@ -20,14 +20,14 @@ type MessageParam struct {
 }
 
 type TaskInfo struct {
-	MessageTemplateId      int64                  `json:"message_template_id"`
-	BusinessId             string                 `json:"bussiness_id"`
-	Receiver               []string               `json:"receiver"`
-	IdType                 int                    `json:"id_type"`
-	SendChannel            int                    `json:"send_channel"`
-	MsgType                int                    `json:"msg_type"`
-	Content                Content            `json:"content"`
-	SendAccount            int                    `json:"send_account"`
+	MessageTemplateId int64    `json:"message_template_id"`
+	BusinessId        string   `json:"bussiness_id"`
+	Receiver          []string `json:"receiver"`
+	IdType            int      `json:"id_type"`
+	SendChannel       int      `json:"send_channel"`
+	MsgType           int      `json:"msg_type"`
+	Content           Content  `json:"content"`
+	SendAccount       int      `json:"send_account"`
 }
 
 type Content struct {
@@ -38,7 +38,7 @@ type Content struct {
 	SmsContent             SmsContent             `json:"sms_content"`
 }
 
-type CommonContent struct {}
+type CommonContent struct{}
 
 type SendRequestParam struct {
 	Code              string       `json:"code"`                                   // 执行业务类型(默认填写 "send")
@@ -46,8 +46,6 @@ type SendRequestParam struct {
 	MessageParam      MessageParam `json:"message_param"`                          // 消息相关的参数
 
 }
-
-
 
 type EmailContent struct {
 	Title   string
@@ -69,8 +67,9 @@ type PushContent struct {
 }
 
 type SmsContent struct {
-	Content string
-	Url     string
+	Content string `json:"content"`
+	Expire string `json:"expire"`
+	Url     string `json:"url"`
 }
 
 var ChannelContentMap = map[int]interface{}{
@@ -82,8 +81,24 @@ var ChannelContentMap = map[int]interface{}{
 }
 
 type DeduplicationParam struct {
-	TaskInfo TaskInfo
+	TaskInfo          TaskInfo
 	DeduplicationTime time.Duration `json:"deduplication_time"`
-	CountNum int `json:"count_num"`
+	CountNum          int           `json:"count_num"`
 	// todo 加数据埋点
+}
+
+// 发送短信参数结构体
+type SmsParam struct {
+	Phones            []string
+	Content           []string
+	MessageTemplateId int64
+	SendAccount       int
+}
+
+type SmsAccountOptions struct {
+	SecretKey   string `json:"secret-key,omitempty" mapstructure:"secret-key"`
+	SecretId    string `json:"secret-id,omitempty" mapstructure:"secret-id"`
+	SmsSdkAppId string `json:"sms-sdk-app-id,omitempty" mapstructure:"sms-sdk-app-id"`
+	SignName    string `json:"sign-name,omitempty" mapstructure:"sign-name"`
+	TemplateId  string `json:"template-id,omitempty" mapstructure:"template-id"`
 }
