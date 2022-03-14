@@ -4,11 +4,13 @@ import (
 	"context"
 	"sai/cache"
 	"sai/common"
+	"sai/pkg/util/kafka"
 	"sai/store"
 )
 
 type MessageService interface {
 	SendMessage(ctx context.Context,param common.SendRequestParam) error
+	SendTest(ctx context.Context)
 
 }
 
@@ -26,7 +28,7 @@ func NewMessageService(s *service) *messageService  {
 }
 
 func (m *messageService) SendMessage(ctx context.Context,param common.SendRequestParam) error {
-	processContext:=common.ProcessContext{
+	processContext:=&common.ProcessContext{
 		Code:          param.Code,
 		SendTaskModel: common.SendTaskModel{
 			MessageTemplateId: param.MessageTemplateId,
@@ -39,6 +41,10 @@ func (m *messageService) SendMessage(ctx context.Context,param common.SendReques
 		return err
 	}
 	return nil
+}
+
+func (m *messageService) SendTest(ctx context.Context)  {
+	kafka.NewProducer(ctx).Send("austin","lallalll")
 }
 
 

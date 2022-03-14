@@ -28,7 +28,7 @@ func (b *baseDeDuplication) DeDuplication(param common.DeduplicationParam) {
 	for _, receiver := range taskInfo.Receiver {
 		key := b.deduplicationSingleKey(taskInfo, receiver)
 		redisValue := inRedisValue[key]
-		if util.StringToInt(redisValue) >= param.CountNum {
+		if len(redisValue)>0 && util.StringToInt(redisValue) >= param.CountNum {
 			filterReceiver = append(filterReceiver, receiver)
 		} else {
 			readyPutRedisReceiver = append(readyPutRedisReceiver, receiver)
@@ -57,7 +57,7 @@ func (b *baseDeDuplication) putInRedis(readyPutRedisReceiver []string,inRedisVal
 }
 
 func (b *baseDeDuplication) deduplicationAllKey(info common.TaskInfo) []string {
-	result := make([]string, len(info.Receiver))
+	var result []string
 	for _, val := range info.Receiver {
 		key := b.deduplicationSingleKey(info, val)
 		result = append(result, key)

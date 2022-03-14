@@ -1,10 +1,12 @@
 package build
 
 import (
+	"fmt"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/marmotedu/errors"
 	"sai/common"
 	"sai/pkg/code"
+	"sai/pkg/util"
 )
 
 type build interface {
@@ -23,7 +25,7 @@ func (a *abstractBuild) Build(deduplicationConfig string, taskInfo common.TaskIn
 	return a.paramBuild(deduplicationConfig, taskInfo)
 }
 
-var DE_DUPLICATION_CONFIG_PRE = "deduplication_"
+var DE_DUPLICATION_CONFIG_PRE = "deduplication_%s"
 
 func (b *abstractBuild) getParamsFromConfig(deduplicationType int, deduplicationConfig string, taskInfo common.TaskInfo) (common.DeduplicationParam, error) {
 	//deduplicationParam := common.DeduplicationParam{}
@@ -36,7 +38,8 @@ func (b *abstractBuild) getParamsFromConfig(deduplicationType int, deduplication
 		return common.DeduplicationParam{}, errors.WithCode(code.ErrParamNotValid, err.Error())
 
 	}
-	currentParam := res[DE_DUPLICATION_CONFIG_PRE+string(deduplicationType)]
+	key:=fmt.Sprintf(DE_DUPLICATION_CONFIG_PRE,util.IntToString(deduplicationType))
+	currentParam := res[key]
 	currentParam.TaskInfo = taskInfo
 	return currentParam, nil
 

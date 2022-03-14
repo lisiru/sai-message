@@ -6,6 +6,7 @@ import (
 	"sai/global"
 	genericoptions "sai/pkg/options"
 	genericapiserver "sai/pkg/server"
+	"sai/pkg/util/kafka"
 	"sai/store/mysql"
 )
 
@@ -78,6 +79,12 @@ func (s *apiServer) PrepareRun() preparedAPIServer {
 }
 
 func (s preparedAPIServer) Run(stopCh <-chan struct{}) error {
+	//groupIds:=util.GetAllGroupIds()
+	//for _,groupId:=range groupIds{
+	//	go kafka.ConsumerGroup("austin",groupId)
+	//}
+	go kafka.ConsumerGroup("austin","sms.notice")
+
 
 
 	return s.genericAPIServer.Run(stopCh)

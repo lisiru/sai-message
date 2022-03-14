@@ -1,6 +1,9 @@
 package deduplication
 
-import "sai/common"
+import (
+	"sai/common"
+	"sai/pkg/logger"
+)
 
 type FrequencyDeDuplication struct {
 
@@ -12,6 +15,7 @@ func init()  {
 
 
 func (frequency *FrequencyDeDuplication) deduplicationSingleKey(taskInfo common.TaskInfo,receiver string) string{
+	logger.Info("frequency")
 	return ""
 
 

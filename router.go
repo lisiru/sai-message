@@ -38,6 +38,8 @@ func installController(g *gin.Engine) *gin.Engine {
 		messageController := message.NewMessageController(storeInstance, cacheInstance)
 		messageGroup.POST("/send", messageController.Send)
 		messageGroup.POST("/batch_send",messageController.BatchSend)
+		messageGroup.GET("/send_test",messageController.SendKafkaTest)
+
 
 	}
 

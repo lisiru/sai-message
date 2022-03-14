@@ -5,7 +5,7 @@ import "sai/common"
 func GetAllGroupIds() []string {
 	var groupIds []string
 	for _, channel := range common.ChannelTypeEnum {
-		for _, messageType := range common.ChannelTypeEnum {
+		for _, messageType := range common.MessageTypeEnum {
 			groupIds = append(groupIds, channel+"."+messageType)
 		}
 

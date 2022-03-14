@@ -15,12 +15,12 @@ import (
 )
 
 type Processor interface {
-	Process(ctx context.Context, processContext common.ProcessContext) error
+	Process(ctx context.Context, processContext *common.ProcessContext) error
 }
 
 type PreParamCheckAction struct{}
 
-func (p *PreParamCheckAction) Process(ctx context.Context, processContext common.ProcessContext) error {
+func (p *PreParamCheckAction) Process(ctx context.Context, processContext *common.ProcessContext) error {
 	messageParamList := processContext.SendTaskModel.MessageParamList
 	if len(messageParamList) == 0 {
 		return errors.WithCode(code.ErrParamNotValid, "", nil)
@@ -46,7 +46,7 @@ type AfterParamCheckAction struct {
 	store store.Factory
 }
 
-func (a *AfterParamCheckAction) Process(ctx context.Context, processContext common.ProcessContext) error {
+func (a *AfterParamCheckAction) Process(ctx context.Context, processContext *common.ProcessContext) error {
 	taskInfo := processContext.SendTaskModel.TaskInfo
 	idType := taskInfo[0].IdType
 	sendChannel := taskInfo[0].SendChannel
@@ -82,10 +82,10 @@ type AssembleAction struct {
 	store store.Factory
 }
 
-func (asseble *AssembleAction) Process(ctx context.Context, processContext common.ProcessContext) error {
+func (asseble *AssembleAction) Process(ctx context.Context, processContext *common.ProcessContext) error {
 	messageTemplateId := processContext.SendTaskModel.MessageTemplateId
 	where := make(map[string]interface{})
-	where["message_template_id"] = messageTemplateId
+	where["id"] = messageTemplateId
 
 	messageTemplateInfo, err := asseble.store.MessageTemplate().GetMessageTemplate(ctx, where)
 	if err != nil {
@@ -131,17 +131,20 @@ func (assemble *AssembleAction) buildTaskInfo(sendTaskModel common.SendTaskModel
 func (assemble *AssembleAction) getContentValue(messageTemplateInfo *model.MessageTemplate, messageParam common.MessageParam) (common.Content,error) {
 	content:=common.Content{}
 	channel := messageTemplateInfo.SendChannel
-	err := json.Unmarshal([]byte(messageTemplateInfo.MsgContent), &content)
-	if err != nil {
-		return content, errors.WithCode(code.ErrParamNotValid,"")
-	}
 	switch channel {
 	case common.CHANNEL_TYPE_SMS:
+		contentModel:=common.SmsContent{}
+		err := json.Unmarshal([]byte(messageTemplateInfo.MsgContent), &contentModel)
+		if err != nil {
+			return content, errors.WithCode(code.ErrParamNotValid,"")
+		}
+		content.SmsContent=contentModel
 		url:=content.SmsContent.Url
 		if len(url) !=0{
 			content.SmsContent.Url=util.GenerateUrl(url,messageTemplateInfo.Id,messageTemplateInfo.TemplateType)
 		}
 	default:
+
 	}
 	return content,nil
 	//contentStruct := common.ChannelContentMap[channel]
@@ -168,7 +171,7 @@ func (assemble *AssembleAction) getContentValue(messageTemplateInfo *model.Messa
 
 type SendMqAction struct{}
 
-func (s *SendMqAction) Process(ctx context.Context, processContext common.ProcessContext) error {
+func (s *SendMqAction) Process(ctx context.Context, processContext *common.ProcessContext) error {
 	message, err := json.Marshal(processContext.SendTaskModel.TaskInfo)
 	if err != nil {
 		return errors.WithCode(code.ErrParamNotValid, "")

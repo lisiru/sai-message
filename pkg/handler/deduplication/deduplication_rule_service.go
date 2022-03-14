@@ -9,7 +9,7 @@ import (
 // 平台通用去重逻辑
 func Duplication(taskInfo common.TaskInfo)  {
 	// todo 从apollo获取去重配置 先写死
-	deduplicationConfig:="{\"deduplication_10\":{\"num\":1,\"time\":300},\"deduplication_20\":{\"num\":5}}"
+	deduplicationConfig:="{\"deduplication_2\":{\"count_num\":1,\"deduplication_time\":300},\"deduplication_1\":{\"count_num\":5}}"
 	// 遍历获取当前去重的全部类型
 	for _,val:=range common.DeDuplicationTypeList {
 		deduplicationParam,err:=build.NewAbstractBuild(val).Build(deduplicationConfig,taskInfo)

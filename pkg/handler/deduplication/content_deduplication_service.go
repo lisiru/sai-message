@@ -20,6 +20,7 @@ func init()  {
 key: md5(templateId+receiver+content)
  */
 func (contentDe *ContentDeDuplication) deduplicationSingleKey(taskInfo common.TaskInfo,receiver string) string {
+
 	contentString, _ :=json.Marshal(taskInfo.Content)
 	md5String := fmt.Sprintf("%x", md5.Sum([]byte(string(taskInfo.MessageTemplateId) + receiver + string(contentString))))
 	return md5String

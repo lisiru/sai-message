@@ -5,11 +5,13 @@ import (
 	"sai/pkg/handler/deduplication"
 	"sai/pkg/handler/discard"
 	"sai/pkg/handler/messagehandler"
+	"sai/pkg/logger"
 	"sai/pkg/workerpool"
 )
 
 func HandlerMessage(info common.TaskInfo) workerpool.Task {
 	return func() {
+		logger.Infof("消费的info:%s",info)
 		// 丢弃消息
 		if discard.IsDiscard(info) {
 			return

@@ -17,9 +17,12 @@ func (me *MessageController) Send(c *gin.Context)  {
 		response.WriteResponse(c,errors.WithCode(code.ErrParamNotValid,err.Error()),nil)
 		return
 	}
-
-
 	me.service.Message().SendMessage(c,*sendRequestParam)
 
+
+}
+
+func (me *MessageController) SendKafkaTest(c *gin.Context)  {
+	me.service.Message().SendTest(c)
 
 }

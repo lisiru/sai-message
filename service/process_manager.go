@@ -18,13 +18,13 @@ func (m *Manager) AddProcess(processor Processor)  {
 
 func NewManager(store store.Factory) *Manager {
 	return &Manager{Processor: []Processor{
-		&PreParamCheckAction{}, &AfterParamCheckAction{}, &AssembleAction{
+		&PreParamCheckAction{},&AssembleAction{
 			store: store,
-		}, &SendMqAction{},
+		}, &AfterParamCheckAction{} , &SendMqAction{},
 	}}
 }
 
-func (m *Manager) Run(ctx context.Context,processContext common.ProcessContext) error {
+func (m *Manager) Run(ctx context.Context,processContext *common.ProcessContext) error {
 	for _,v:=range m.Processor{
 		err:=v.Process(ctx,processContext)
 		if err != nil {

@@ -38,12 +38,16 @@ type Content struct {
 	SmsContent             SmsContent             `json:"sms_content"`
 }
 
+type CommonContent struct {}
+
 type SendRequestParam struct {
 	Code              string       `json:"code"`                                   // 执行业务类型(默认填写 "send")
 	MessageTemplateId int64        `json:"message_template_id" binding:"required"` // 消息模板Id
 	MessageParam      MessageParam `json:"message_param"`                          // 消息相关的参数
 
 }
+
+
 
 type EmailContent struct {
 	Title   string
@@ -79,7 +83,7 @@ var ChannelContentMap = map[int]interface{}{
 
 type DeduplicationParam struct {
 	TaskInfo TaskInfo
-	DeduplicationTime time.Duration
-	CountNum int
+	DeduplicationTime time.Duration `json:"deduplication_time"`
+	CountNum int `json:"count_num"`
 	// todo 加数据埋点
 }

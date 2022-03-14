@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/Shopify/sarama"
 	"sai/common"
+	"sai/global"
 	"sai/pkg/handler/pending"
 	"sai/pkg/logger"
 	"sai/pkg/util"
@@ -28,8 +29,11 @@ func (consumer ConsumerGroupHandler) ConsumeClaim(session sarama.ConsumerGroupSe
 	var taskInfoList = []common.TaskInfo{}
 
 	for msg := range claim.Messages() {
+		logger.Infof("kafka 收到的消息:%s",msg.Value)
 		json.Unmarshal(msg.Value, &taskInfoList)
+		logger.Infof("taskInfo:%s",taskInfoList)
 		groupId:=util.GetGroupIdByTaskInfo(taskInfoList[0])
+		logger.Infof("groupId:",groupId)
 		if consumer.GroupId== groupId{
 			for _,taskInfo:=range taskInfoList{
 				pending.GetPool(groupId).Schedule(pending.HandlerMessage(taskInfo))
@@ -47,7 +51,7 @@ func ConsumerGroup(topic, groupId string) {
 	config.Consumer.Return.Errors = true
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	cg, err := sarama.NewConsumerGroup(strings.Split(kafkaConfig.Host, ","), groupId, config)
+	cg, err := sarama.NewConsumerGroup(strings.Split(global.KafkaConfig.Host, ","), groupId, config)
 	if err != nil {
 		logger.Errorf("NewConsumerGroup err: ", err)
 	}
