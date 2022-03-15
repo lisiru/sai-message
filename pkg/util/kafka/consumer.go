@@ -31,9 +31,7 @@ func (consumer ConsumerGroupHandler) ConsumeClaim(session sarama.ConsumerGroupSe
 	for msg := range claim.Messages() {
 		logger.Infof("kafka 收到的消息:%s",msg.Value)
 		json.Unmarshal(msg.Value, &taskInfoList)
-		logger.Infof("taskInfo:%s",taskInfoList)
 		groupId:=util.GetGroupIdByTaskInfo(taskInfoList[0])
-		logger.Infof("groupId:",groupId)
 		if consumer.GroupId== groupId{
 			for _,taskInfo:=range taskInfoList{
 				pending.GetPool(groupId).Schedule(pending.HandlerMessage(taskInfo))

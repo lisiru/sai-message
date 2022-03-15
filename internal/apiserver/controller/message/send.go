@@ -17,7 +17,12 @@ func (me *MessageController) Send(c *gin.Context)  {
 		response.WriteResponse(c,errors.WithCode(code.ErrParamNotValid,err.Error()),nil)
 		return
 	}
-	me.service.Message().SendMessage(c,*sendRequestParam)
+	err:=me.service.Message().SendMessage(c,*sendRequestParam)
+	if err != nil {
+		response.WriteResponse(c,err,nil)
+		return
+	}
+	response.WriteResponse(c,nil,nil)
 
 
 }

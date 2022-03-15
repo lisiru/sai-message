@@ -8,6 +8,7 @@ import (
 	"sai/common"
 	"sai/model"
 	"sai/pkg/code"
+	"sai/pkg/logger"
 	"sai/pkg/util"
 	"sai/pkg/util/kafka"
 	"sai/store"
@@ -21,6 +22,7 @@ type Processor interface {
 type PreParamCheckAction struct{}
 
 func (p *PreParamCheckAction) Process(ctx context.Context, processContext *common.ProcessContext) error {
+	logger.L(ctx).Info("前置参数检查")
 	messageParamList := processContext.SendTaskModel.MessageParamList
 	if len(messageParamList) == 0 {
 		return errors.WithCode(code.ErrParamNotValid, "", nil)
@@ -47,6 +49,7 @@ type AfterParamCheckAction struct {
 }
 
 func (a *AfterParamCheckAction) Process(ctx context.Context, processContext *common.ProcessContext) error {
+	logger.L(ctx).Info("后置参数检查")
 	taskInfo := processContext.SendTaskModel.TaskInfo
 	idType := taskInfo[0].IdType
 	sendChannel := taskInfo[0].SendChannel
@@ -83,6 +86,7 @@ type AssembleAction struct {
 }
 
 func (asseble *AssembleAction) Process(ctx context.Context, processContext *common.ProcessContext) error {
+	logger.L(ctx).Info("任务内容处理")
 	messageTemplateId := processContext.SendTaskModel.MessageTemplateId
 	where := make(map[string]interface{})
 	where["id"] = messageTemplateId
@@ -174,6 +178,7 @@ func (assemble *AssembleAction) getContentValue(messageTemplateInfo *model.Messa
 type SendMqAction struct{}
 
 func (s *SendMqAction) Process(ctx context.Context, processContext *common.ProcessContext) error {
+	logger.L(ctx).Info("发送mq")
 	message, err := json.Marshal(processContext.SendTaskModel.TaskInfo)
 	if err != nil {
 		return errors.WithCode(code.ErrParamNotValid, "")
