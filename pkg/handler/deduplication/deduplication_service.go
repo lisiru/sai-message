@@ -16,7 +16,6 @@ type baseDeDuplication struct {
 	redisClient cache.Factory
 }
 
-
 func (b *baseDeDuplication) DeDuplication(param common.DeduplicationParam) {
 	taskInfo := param.TaskInfo
 	var inRedisValue map[string]string
@@ -28,31 +27,30 @@ func (b *baseDeDuplication) DeDuplication(param common.DeduplicationParam) {
 	for _, receiver := range taskInfo.Receiver {
 		key := b.deduplicationSingleKey(taskInfo, receiver)
 		redisValue := inRedisValue[key]
-		if len(redisValue)>0 && util.StringToInt(redisValue) >= param.CountNum {
+		if len(redisValue) > 0 && util.StringToInt(redisValue) >= param.CountNum {
 			filterReceiver = append(filterReceiver, receiver)
 		} else {
 			readyPutRedisReceiver = append(readyPutRedisReceiver, receiver)
 		}
 
 	}
-	b.putInRedis(readyPutRedisReceiver,inRedisValue,param)
-	taskInfo.Receiver=readyPutRedisReceiver
+	b.putInRedis(readyPutRedisReceiver, inRedisValue, param)
+	taskInfo.Receiver = readyPutRedisReceiver
 }
 
-func (b *baseDeDuplication) putInRedis(readyPutRedisReceiver []string,inRedisValue map[string]string,param common.DeduplicationParam)  {
+func (b *baseDeDuplication) putInRedis(readyPutRedisReceiver []string, inRedisValue map[string]string, param common.DeduplicationParam) {
 	var keyValues = make(map[string]string)
-	for _,receiver:=range readyPutRedisReceiver{
-		key:=b.deduplicationSingleKey(param.TaskInfo,receiver)
-		if inRedisValue[key] !="" {
-			keyValues[key] = inRedisValue[key]
-		}else {
+	for _, receiver := range readyPutRedisReceiver {
+		key := b.deduplicationSingleKey(param.TaskInfo, receiver)
+		if inRedisValue[key] != "" {
+			keyValues[key] = util.IntToString(util.StringToInt(inRedisValue[key]) + 1)
+		} else {
 			keyValues[key] = util.IntToString(1)
 		}
 	}
-	if len(keyValues)>0 {
+	if len(keyValues) > 0 {
 		_ = b.redisClient.MessageCaches().PutInRedis(keyValues, param.DeduplicationTime)
 	}
-
 
 }
 
@@ -68,9 +66,9 @@ func (b *baseDeDuplication) deduplicationAllKey(info common.TaskInfo) []string {
 }
 
 func NewBaseDeDuplication(deDuplicationType int) *baseDeDuplication {
-	redisClient,_:=redis.NewRedisFactoryOr(nil)
+	redisClient, _ := redis.NewRedisFactoryOr(nil)
 	return &baseDeDuplication{
-		redisClient: redisClient,
+		redisClient:          redisClient,
 		DeDuplicationService: SelectDeDuplicationService(deDuplicationType),
 	}
 

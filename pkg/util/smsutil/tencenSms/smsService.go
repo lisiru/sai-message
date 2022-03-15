@@ -57,20 +57,20 @@ func WithCpfSignMethod(method string) Option {
 	}
 }
 
-func (s *SmsClient) Send() bool {
+func (s *SmsClient) Send() (*sms.SendSmsResponse,error) {
 	sendClient, _ := sms.NewClient(s.Credential, s.Region, s.Cpf)
-	_, err := sendClient.SendSms(s.Request.request)
+	response, err := sendClient.SendSms(s.Request.request)
 	if _, ok := err.(*errors.TencentCloudSDKError); ok {
 		logger.Warnf("An API error has returned: %s", err)
-		return false
+		return nil, err
 	}
 
 	if err != nil {
 		logger.Warnf("发送短信失败:%s,requestId:%s", err)
-		return false
+		return nil,err
 
 	}
 	logger.Info("发送短信验证码成功")
-	return true
+	return response,nil
 }
 

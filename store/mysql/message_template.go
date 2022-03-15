@@ -25,7 +25,7 @@ func (m *messageTemplate) GetMessageTemplate(ctx context.Context, where map[stri
 	return &messageTemplateModel,nil
 }
 
-func NewMessageTemplate(ds *datastore) *messageTemplate  {
+func newMessageTemplate(ds *datastore) *messageTemplate  {
 	return &messageTemplate{db: ds.db}
 }
 

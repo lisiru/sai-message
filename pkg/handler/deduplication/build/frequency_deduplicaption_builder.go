@@ -3,6 +3,7 @@ package build
 import (
 	"sai/common"
 	"sai/pkg/logger"
+	"time"
 )
 
 func init() {
@@ -20,7 +21,7 @@ func (content *FrequencyDeduplicationBuild) paramBuild(deduplicationConfig strin
 		return common.DeduplicationParam{}, err
 	}
 	// todo 获取当天剩余的时间
-	deduplicationParam.DeduplicationTime = 3000
+	deduplicationParam.DeduplicationTime = 3000*time.Second
 	return deduplicationParam,nil
 	//// todo 该类型去重下的特定操作
 	//return deduplicationParam, nil

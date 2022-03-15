@@ -24,8 +24,12 @@ func (ds *datastore) Users() store.UserStore {
 	return newUsers(ds)
 }
 
+func (ds *datastore) SmsRecord() store.SmsRecord  {
+	return newSmsRecord(ds)
+}
+
 func (ds *datastore) MessageTemplate() store.MessageTemplate  {
-	return NewMessageTemplate(ds)
+	return newMessageTemplate(ds)
 }
 
 func (ds *datastore) Close() error {

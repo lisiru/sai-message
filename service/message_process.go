@@ -139,7 +139,7 @@ func (assemble *AssembleAction) getContentValue(messageTemplateInfo *model.Messa
 			return content, errors.WithCode(code.ErrParamNotValid,"")
 		}
 		contentModel.Content=messageParam.Variable[strings.ReplaceAll(contentModel.Content,common.CONTENT_REPLACE_OLD_STR,common.CONTENT_REPLACE_NEW_STR)]
-		contentModel.Expire=messageParam.Variable[strings.ReplaceAll(contentModel.Url,"?","")]
+		contentModel.Expire=messageParam.Variable[strings.ReplaceAll(contentModel.Expire,common.CONTENT_REPLACE_OLD_STR,common.CONTENT_REPLACE_NEW_STR)]
 		content.SmsContent=contentModel
 		url:=content.SmsContent.Url
 		if len(url) !=0{

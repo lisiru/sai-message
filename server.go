@@ -48,7 +48,7 @@ func (c *ExtraConfig) complete() *completedExtraConfig {
 
 func (c *completedExtraConfig) New() {
 
-	_, _ = mysql.GetMySQLFactoryOr(c.mysqlOptions)
+	global.Store, _ = mysql.GetMySQLFactoryOr(c.mysqlOptions)
 	_, _ = redis.NewRedisFactoryOr(c.redisOptions)
 }
 func createAPIServer(cfg *config.Config) (*apiServer, error) {

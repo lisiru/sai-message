@@ -56,6 +56,14 @@ const  (
 
 var DeDuplicationTypeList = []int{DE_DUPLICATION_TYPE_CONTENT,DE_DUPLICATION_TYPE_FREQUENCY}
 
+// 短信状态信息
+
+const  (
+	SEND_SUCCESS int8= iota+1 //调用渠道接口发送成功
+	RECEIVE_SUCCESS  //用户收到短信(收到渠道短信回执，状态成功)
+	RECEIVE_FAIL //用户收不到短信(收到渠道短信回执，状态失败)
+)
+
 
 
 

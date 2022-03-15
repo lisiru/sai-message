@@ -1,6 +1,8 @@
 package messagehandler
 
-import "sai/common"
+import (
+	"sai/common"
+)
 
 type MessageHandler interface {
 	DoHandler(taskInfo common.TaskInfo)
@@ -11,7 +13,11 @@ type baseHandler struct {
 }
 
 func NewBaseHandler(channelCode int) *baseHandler {
-	return &baseHandler{MessageHandler: SelectHandler(channelCode)}
+
+	return &baseHandler{
+		MessageHandler: SelectHandler(channelCode),
+
+	}
 }
 
 func (b *baseHandler) Handler(info common.TaskInfo) {
