@@ -20,6 +20,7 @@ func NewBaseHandler(channelCode int) *baseHandler {
 	}
 }
 
+// 统一的发送接口，各个渠道需要实现这个方法
 func (b *baseHandler) Handler(info common.TaskInfo) {
 	b.DoHandler(info)
 }

@@ -16,12 +16,13 @@ type baseDeDuplication struct {
 	redisClient cache.Factory
 }
 
+// 公共去重入口
 func (b *baseDeDuplication) DeDuplication(param common.DeduplicationParam) {
 	taskInfo := param.TaskInfo
 	var inRedisValue map[string]string
 	var filterReceiver []string
 	var readyPutRedisReceiver []string
-	keys := b.deduplicationAllKey(taskInfo)
+	keys := b.deduplicationAllKey(taskInfo) // 各个去重方式需要实现的方法，从而达到实现不同方式的去重
 	inRedisValue, _ = b.redisClient.MessageCaches().Mget(keys)
 	//从redis中获取key已存在的值
 	for _, receiver := range taskInfo.Receiver {
@@ -38,6 +39,7 @@ func (b *baseDeDuplication) DeDuplication(param common.DeduplicationParam) {
 	taskInfo.Receiver = readyPutRedisReceiver
 }
 
+// 批量保存到redis
 func (b *baseDeDuplication) putInRedis(readyPutRedisReceiver []string, inRedisValue map[string]string, param common.DeduplicationParam) {
 	var keyValues = make(map[string]string)
 	for _, receiver := range readyPutRedisReceiver {
@@ -54,6 +56,7 @@ func (b *baseDeDuplication) putInRedis(readyPutRedisReceiver []string, inRedisVa
 
 }
 
+// 获取当前发送内容的全部key
 func (b *baseDeDuplication) deduplicationAllKey(info common.TaskInfo) []string {
 	var result []string
 	for _, val := range info.Receiver {

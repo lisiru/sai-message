@@ -10,7 +10,7 @@ const  (
 )
 
 
-
+// 发送渠道枚举
 const  (
 	CHANNEL_TYPE_IM int  = iota+1
 	CHANNEL_TYPE_PUSH
@@ -20,19 +20,22 @@ const  (
 	MINI_PROGRAM
 )
 
+// 消息类型枚举
 const  (
-	MESSAGE_TYPE_NOTICE int = iota+1
-	MESSAGE_TYPE_MARKETING
-	MESSAGE_TYPE_AUTH_CODE
+	MESSAGE_TYPE_NOTICE int = iota+1 // 通知类
+	MESSAGE_TYPE_MARKETING // 营销类
+	MESSAGE_TYPE_AUTH_CODE // 验证码
 
 )
 
+// 消息类型映射枚举
 var  MessageTypeEnum = map[int]string{
 	MESSAGE_TYPE_NOTICE: "notice",
 	MESSAGE_TYPE_MARKETING: "marketing",
 	MESSAGE_TYPE_AUTH_CODE: "auth_code",
 }
 
+// 发送渠道映射枚举
 var ChannelTypeEnum = map[int]string{
 	CHANNEL_TYPE_IM: "im",
 	CHANNEL_TYPE_SMS: "sms",

@@ -14,6 +14,7 @@ type FrequencyDeduplicationBuild struct {
 	abstractBuild
 }
 
+// 频率去重方式构建参数的方法
 func (content *FrequencyDeduplicationBuild) paramBuild(deduplicationConfig string, info common.TaskInfo) (common.DeduplicationParam, error) {
 	logger.Info("频率构建参数")
 	deduplicationParam, err := content.getParamsFromConfig(common.DE_DUPLICATION_TYPE_FREQUENCY, deduplicationConfig, info)

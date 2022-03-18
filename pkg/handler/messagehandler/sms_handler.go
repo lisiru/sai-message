@@ -11,6 +11,7 @@ import (
 	"time"
 )
 
+// 注册当前发送handler
 func init() {
 	Handlers[common.CHANNEL_TYPE_SMS] = &SmsHandler{}
 }

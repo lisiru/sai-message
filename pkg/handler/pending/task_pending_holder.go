@@ -12,7 +12,7 @@ const (
 
 
 var taskPendingHolder =make(map[string]*workerpool.Pool)
-
+// 根据groupid进行创建groutine池
 func init() {
 	var groupIds = util.GetAllGroupIds()
 	for _, groupId := range groupIds {
@@ -21,6 +21,7 @@ func init() {
 	}
 }
 
+// 根据groupid 获取groutine池
 func GetPool(groupId string) *workerpool.Pool {
 	return taskPendingHolder[groupId]
 }

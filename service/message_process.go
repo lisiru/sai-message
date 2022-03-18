@@ -21,6 +21,7 @@ type Processor interface {
 
 type PreParamCheckAction struct{}
 
+// 发送的前置参数检查
 func (p *PreParamCheckAction) Process(ctx context.Context, processContext *common.ProcessContext) error {
 	logger.L(ctx).Info("前置参数检查")
 	messageParamList := processContext.SendTaskModel.MessageParamList
@@ -48,6 +49,7 @@ type AfterParamCheckAction struct {
 	store store.Factory
 }
 
+// 发送的后置参数检查
 func (a *AfterParamCheckAction) Process(ctx context.Context, processContext *common.ProcessContext) error {
 	logger.L(ctx).Info("后置参数检查")
 	taskInfo := processContext.SendTaskModel.TaskInfo
@@ -85,6 +87,7 @@ type AssembleAction struct {
 	store store.Factory
 }
 
+// 发送内容赋值处理
 func (asseble *AssembleAction) Process(ctx context.Context, processContext *common.ProcessContext) error {
 	logger.L(ctx).Info("任务内容处理")
 	messageTemplateId := processContext.SendTaskModel.MessageTemplateId
@@ -109,6 +112,7 @@ func (asseble *AssembleAction) Process(ctx context.Context, processContext *comm
 
 }
 
+// 生成taskInfo
 func (assemble *AssembleAction) buildTaskInfo(sendTaskModel common.SendTaskModel, messageTemplateInfo *model.MessageTemplate) ([]common.TaskInfo,error) {
 	messageParamList := sendTaskModel.MessageParamList
 	var taskInfoList []common.TaskInfo
@@ -132,6 +136,7 @@ func (assemble *AssembleAction) buildTaskInfo(sendTaskModel common.SendTaskModel
 
 }
 
+// 获取 各个不同渠道的taskContent
 func (assemble *AssembleAction) getContentValue(messageTemplateInfo *model.MessageTemplate, messageParam common.MessageParam) (common.Content,error) {
 	content:=common.Content{}
 	channel := messageTemplateInfo.SendChannel
@@ -177,6 +182,7 @@ func (assemble *AssembleAction) getContentValue(messageTemplateInfo *model.Messa
 
 type SendMqAction struct{}
 
+// 发送到kafka
 func (s *SendMqAction) Process(ctx context.Context, processContext *common.ProcessContext) error {
 	logger.L(ctx).Info("发送mq")
 	message, err := json.Marshal(processContext.SendTaskModel.TaskInfo)

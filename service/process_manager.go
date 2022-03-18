@@ -16,6 +16,7 @@ func (m *Manager) AddProcess(processor Processor)  {
 
 }
 
+// 对责任链各个职责功能函数管理
 func NewManager(store store.Factory) *Manager {
 	return &Manager{Processor: []Processor{
 		&PreParamCheckAction{},&AssembleAction{
@@ -23,6 +24,7 @@ func NewManager(store store.Factory) *Manager {
 		}, &AfterParamCheckAction{} , &SendMqAction{},
 	}}
 }
+
 
 func (m *Manager) Run(ctx context.Context,processContext *common.ProcessContext) error {
 	for _,v:=range m.Processor{

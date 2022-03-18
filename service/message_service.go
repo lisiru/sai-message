@@ -36,6 +36,7 @@ func (m *messageService) SendMessage(ctx context.Context,param common.SendReques
 		},
 	}
 	processManager:=NewManager(m.store)
+	// 进入责任链模式对发送消息的一系列处理
 	err := processManager.Run(ctx,processContext)
 	if err != nil {
 		return err
